@@ -1,0 +1,33 @@
+{
+  "name": "@perspectivism/ad4m-cli",
+  "version": "0.0.1",
+  "description": "A CLI for ad4m",
+  "main": "src/index.js",
+  "bin": {
+    "@perspectivism/ad4m": "bin/ad4m",
+    "ad4m": "bin/ad4m"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "cli",
+    "perspectivism",
+    "ad4m"
+  ],
+  "author": "Jacob Dawid",
+  "license": "CAL-1.0",
+  "dependencies": {
+    "esm": "^3.2.25",
+    "@apollo/client": "^3.3.21",
+    "@perspect3vism/ad4m": "file:../ad4m",
+    "@perspect3vism/ad4m-executor": "file:../ad4m-executor",
+    "graphql": "^15.5.1",
+    "react": "^17.0.2",
+    "subscriptions-transport-ws": "^0.9.19",
+    "yargs": "^17.0.1"
+  }
+}
