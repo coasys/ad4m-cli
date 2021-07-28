@@ -14,8 +14,8 @@ import { WebSocketLink } from '@apollo/client/link/ws';
 import WebSockets from "ws";
 
 // Perspectivism imports
-import { Ad4mClient } from "../../ad4m";
-import Ad4mExecutor from "../../ad4m-executor";
+import { Ad4mClient } from "@perspect3vism/ad4m";
+import Ad4mExecutor from "@perspect3vism/ad4m-executor";
 
 // Utilities
 import getAppDataPath from "appdata-path";

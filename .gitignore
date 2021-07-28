@@ -2,3 +2,7 @@ node_modules
 Links.test.js
 lib/*
 coverage
+hc
+holochain
+lair-keystore
+src/builtin-langs/

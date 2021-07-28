@@ -11,7 +11,8 @@
     "access": "public"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "bootstrap": "nix-shell --run ./scripts/createHolochainSymlinks.sh && node scripts/get-builtin-langs.js"
   },
   "keywords": [
     "cli",
@@ -22,11 +23,13 @@
   "license": "CAL-1.0",
   "dependencies": {
     "@apollo/client": "^3.3.21",
-    "@perspect3vism/ad4m": "file:../ad4m",
-    "@perspect3vism/ad4m-executor": "file:../ad4m-executor",
+    "@perspect3vism/ad4m": "^0.1.5",
+    "@perspect3vism/ad4m-executor": "^0.1.1",
     "appdata-path": "^1.0.0",
     "esm": "^3.2.25",
+    "fs-extra": "^10.0.0",
     "graphql": "^15.5.1",
+    "node-wget-js": "^1.0.1",
     "react": "^17.0.2",
     "subscriptions-transport-ws": "^0.9.19",
     "yargs": "^17.0.1"
