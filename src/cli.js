@@ -56,10 +56,6 @@ function ad4mClient(uri) {
   return new Ad4mClient(apolloClient(uri));
 }
 
-function queryPassphrase() {
-  return "test";
-}
-
 function serveAd4mExecutor() {
   const worldLinkLanguageHash = 'QmchPr6NgxFUrrETHrd49DSRdfFMdn6A5sw2JSXhujy4gS'
   const bootstrapPath = path.join(__dirname, '../bootstrap');
@@ -75,7 +71,7 @@ function serveAd4mExecutor() {
   .init({
     appDataPath: getAppDataPath(),
     resourcePath: path.join(__dirname, '..'),
-    appDefaultLangPath: "./src/languages",
+    appDefaultLangPath: "./src/builtin-langs",
     ad4mBootstrapLanguages: {
       agents: "agent-profiles",
       languages: "languages",
@@ -117,13 +113,67 @@ function serveAd4mExecutor() {
   });
 }
 
-export function cli(args) {
+function outputNicely(obj) {
+  console.info(`=> ${JSON.stringify(obj)}`);
+}
 
+function queryPassphrase() {
+  return "test";
+}
+
+async function agentGenerate(argv) {
+  if(argv.verbose) {
+    console.info(`Generating agent`);
+    console.info(`Attempting to connect to ${argv.server}`);
+  }
+
+  const agentDump = await ad4mClient(argv.server).agent.generate(queryPassphrase());
+  outputNicely(agentDump);
+  process.exit();
+}
+
+async function agentLock(argv) {
+  if(argv.verbose) {
+    console.info(`Locking agent`);
+    console.info(`Attempting to connect to ${argv.server}`);
+  }
+
+  const agentDump = await ad4mClient(argv.server).agent.lock(queryPassphrase());
+  outputNicely(agentDump);
+  process.exit();
+}
+
+async function agentUnlock(argv) {
+  if(argv.verbose) {
+    console.info(`Unlocking agent`);
+    console.info(`Attempting to connect to ${argv.server}`);
+  }
+
+  const agentDump = await ad4mClient(argv.server).agent.unlock(queryPassphrase());
+  outputNicely(agentDump);
+  process.exit();
+}
+
+async function agentStatus(argv) {
+  if(argv.verbose) {
+    console.info(`Querying agent status`);
+    console.info(`Attempting to connect to ${argv.server}`);
+  }
+
+  const agentDump = await ad4mClient(argv.server).agent.status();
+  outputNicely(agentDump);
+  process.exit();
+}
+
+export function cli(args) {
   Yargs(hideBin(args))
+    // Run Ad4m Executor
     .command('serve', 'Serves the ad4m executor', (yargs) => {
     }, async (argv) => {
       serveAd4mExecutor();
     })
+
+    // Agents API
     .command('agent [action]', 'Agent-related action', (yargs) => {
       return yargs.positional('action', {
         describe: 'Action that should be executed on the agent',
@@ -131,58 +181,32 @@ export function cli(args) {
       })
     }, async (argv) => {
       switch (argv.action) {
-        case 'generate':
-          const agentDump1 = await ad4mClient(argv.server).agent.generate(queryPassphrase());
-          console.info(`${agentDump1}`);
-          break;
-        case 'lock':
-          const agentDump2 = await ad4mClient(argv.server).agent.lock(queryPassphrase());
-          console.info(`${agentDump2}`);
-          break;
-        case 'unlock':
-          const agentDump3= await ad4mClient(argv.server).agent.unlock(queryPassphrase());
-          console.info(`${agentDump3}`);
-          break;
-        case 'status':
-          if(argv.verbose) {
-            console.info(`Querying agent status`);
-            console.info(`Attempting to connect to ${argv.server}`);
-          }
+        case 'generate':  agentGenerate(argv);  break;
+        case 'lock':      agentLock(argv);      break;
+        case 'unlock':    agentUnlock(argv);    break;
+        case 'status':    agentStatus(argv);    break;
 
-          const agentDump = JSON.stringify(await ad4mClient(argv.server).agent.status());
-          console.info(`${agentDump}`);
-
-          break;
         default:
           console.info(`Action "${argv.action}" does not seem to be valid on agent.`)
           break;
       }
-      //if (argv.verbose) console.info(`start server on :${argv.port}`)
-      //serve(argv.port)
     })
+
+    // Perspectives API
     .command('perspective [action]', 'Perspective-related action', (yargs) => {
       return yargs
     }, (argv) => {
       //if (argv.verbose)
       //serve(argv.port)
     })
+
+    // Expressions API
     .command('expression [action]', 'Expression-related action', (yargs) => {
       return yargs
     }, (argv) => {
       //if (argv.verbose) console.info(`start server on :${argv.port}`)
       //serve(argv.port)
     })
-    /*
-    .command('serve [port]', 'start the server', (yargs) => {
-      return yargs
-        .positional('port', {
-          describe: 'port to bind on',
-          default: 5000
-        })
-    }, (argv) => {
-      if (argv.verbose) console.info(`start server on :${argv.port}`)
-      serve(argv.port)
-    })*/
     .option('server', {
       alias: 's',
       type: 'string',
