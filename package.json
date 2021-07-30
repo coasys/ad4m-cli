@@ -23,6 +23,7 @@
   "license": "CAL-1.0",
   "dependencies": {
     "@apollo/client": "^3.3.21",
+    "@peculiar/webcrypto": "^1.1.7",
     "@perspect3vism/ad4m": "^0.1.5",
     "@perspect3vism/ad4m-executor": "^0.1.2",
     "appdata-path": "^1.0.0",

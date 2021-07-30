@@ -22,6 +22,17 @@ import getAppDataPath from "appdata-path";
 import fs from 'fs';
 import path from 'path';
 
+// For yet unknown reasons there are two relevant implementations for crypto as
+// of now: The NodeJS core implementation and the Webcrypto implementation(s)
+// in browser environments. Those are similar, but at the same time have major
+// architectural as well as functional differences.
+//
+// There are heated discussions about implementing Webcrypto in NodeJS with
+// seemingly no practical results. Amongst different approaches to solve this
+// I have found this library as a polyfill. Seems to do the job.
+import { Crypto } from "@peculiar/webcrypto";
+global.crypto = new Crypto();
+
 function apolloClient(uri) {
   return new ApolloClient({
       link: new WebSocketLink({
@@ -63,7 +74,7 @@ function serveAd4mExecutor() {
   Ad4mExecutor
   .init({
     appDataPath: getAppDataPath(),
-    resourcePath: __dirname,
+    resourcePath: path.join(__dirname, '..'),
     appDefaultLangPath: "./src/languages",
     ad4mBootstrapLanguages: {
       agents: "agent-profiles",
@@ -138,7 +149,7 @@ export function cli(args) {
             console.info(`Attempting to connect to ${argv.server}`);
           }
 
-          const agentDump = await ad4mClient(argv.server).agent.status();
+          const agentDump = JSON.stringify(await ad4mClient(argv.server).agent.status());
           console.info(`${agentDump}`);
 
           break;
