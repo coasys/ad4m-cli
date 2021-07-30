@@ -22,6 +22,8 @@ import getAppDataPath from "appdata-path";
 import fs from 'fs';
 import path from 'path';
 
+import ReadlineSync from 'readline-sync';
+
 // For yet unknown reasons there are two relevant implementations for crypto as
 // of now: The NodeJS core implementation and the Webcrypto implementation(s)
 // in browser environments. Those are similar, but at the same time have major
@@ -118,7 +120,8 @@ function outputNicely(obj) {
 }
 
 function queryPassphrase() {
-  return "test";
+  const password = ReadlineSync.question("Password: ", { hideEchoBack: true });
+  return password;
 }
 
 async function agentGenerate(argv) {
@@ -137,8 +140,8 @@ async function agentLock(argv) {
     console.info(`Locking agent`);
     console.info(`Attempting to connect to ${argv.server}`);
   }
-
-  const agentDump = await ad4mClient(argv.server).agent.lock(queryPassphrase());
+  // Passphrase not needed
+  const agentDump = await ad4mClient(argv.server).agent.lock("");
   outputNicely(agentDump);
   process.exit();
 }
