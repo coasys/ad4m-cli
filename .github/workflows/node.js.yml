@@ -31,4 +31,6 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
-    - run: npm run github-test
+    - run: npm install
+    - run: npm run bootstrap
+    - run: npm run test
