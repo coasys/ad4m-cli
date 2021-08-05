@@ -14,6 +14,7 @@
     "run": "node bin/ad4m",
     "setup": "./developer-setup.sh",
     "test": "jest",
+    "github-test": "npm install && npm run bootstrap && npm run test",
     "bootstrap": "nix-shell --run ./scripts/createHolochainSymlinks.sh && node scripts/get-builtin-langs.js"
   },
   "keywords": [
