@@ -1,50 +1,44 @@
 const { spawn } = require('child_process');
 
+var os = require('os');
+var pty = require('node-pty');
+
 class TestUtils {
-    static launchAd4mProcess(args, finishedCallback = null) {
-        if(!global.ad4mProcesses) {
-            global.ad4mProcesses = [];
-        }
+    static ptyProcesses = [];
 
-        args.unshift("bin/ad4m");
-        let process = spawn('node', args);
+    static launchProcess(command, inputEventHandler = null, exitEventHandler = null) {
+
+        var shell = os.platform() === 'win32' ? 'powershell.exe' : 'sh';
+
+        var ptyProcess = pty.spawn(shell, [], {
+            name: 'xterm-color',
+            cols: 80,
+            rows: 30,
+            cwd: process.env.PWD,
+            env: process.env
+        });
         
-        // Keep track of the process, so we do not leave orphaned processes
-        // when anything goes bonkers.
-        global.ad4mProcesses.push(process);
-
-        process.stdout.on('data', (chunk) => {
-            if(!process.outputChunks)
-                process.outputChunks = [];
-
-            process.outputChunks.push(chunk);
+        ptyProcess.onData((data) => {
+            if(inputEventHandler)
+                inputEventHandler(ptyProcess, data);
         });
 
-        // process.stdout.on('end', () => {
-        //     // Since the process has terminated, we can stop tracking it.
-        //     global.ad4mProcesses = global.ad4mProcesses.filter((v) => v != process);
-
-        //     if(finishedCallback) {
-        //         let output = Buffer.concat(process.outputChunks).toString();
-        //         finishedCallback(output);
-        //     }
-        // });
-
-        process.on('close', () => {
-            // Since the process has terminated, we can stop tracking it.
-            global.ad4mProcesses = global.ad4mProcesses.filter((v) => v != process);
-
-            if(finishedCallback) {
-                let output = Buffer.concat(process.outputChunks).toString();
-                finishedCallback(output);
-            }
+        ptyProcess.onExit((exitCode, signal) => {
+            if(exitEventHandler)
+                exitEventHandler(ptyProcess, exitCode, signal);
         });
 
-        return process;
+        this.ptyProcesses.push(ptyProcess);
+        ptyProcess.write(`${command}\r`);
+        return ptyProcess;
     }
 
-    static ad4mProcesses() {
-        return global.ad4mProcesses;
+    static terminateProcesses() {
+        this.ptyProcesses.forEach(
+            p => {
+                p.kill("SIGHUP");
+            }
+        );
     }
 }
 
