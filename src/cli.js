@@ -59,36 +59,19 @@ function ad4mClient(uri) {
 }
 
 function serveAd4mExecutor() {
-  const worldLinkLanguageHash = 'QmchPr6NgxFUrrETHrd49DSRdfFMdn6A5sw2JSXhujy4gS'
-  const bootstrapPath = path.join(__dirname, '../bootstrap');
-
-  let bootstrapFixtures = {
-    worldPerspective: JSON.parse(fs.readFileSync(path.join(bootstrapPath, 'world.perspective.json'))),
-    worldLinkLanguageHash,
-    worldLinkLinguageBundle:  fs.readFileSync(path.join(bootstrapPath, worldLinkLanguageHash, 'bundle.js')),
-    worldLinkLinguageMeta: JSON.parse(fs.readFileSync(path.join(bootstrapPath, worldLinkLanguageHash, 'meta.json'))),
-  }
-
   Ad4mExecutor
   .init({
     appDataPath: getAppDataPath(),
     resourcePath: path.join(__dirname, '..'),
     appDefaultLangPath: "./src/builtin-langs",
     ad4mBootstrapLanguages: {
-      agents: "agent-profiles",
+      agents: "agent-expression-store",
       languages: "languages",
-      perspectives: "shared-perspectives"
+      neighbourhoods: "neighbourhood-store"
     },
     ad4mBootstrapFixtures: {
-      languages: [{
-        address: bootstrapFixtures.worldLinkLanguageHash,
-        meta: bootstrapFixtures.worldLinkLinguageMeta,
-        bundle: bootstrapFixtures.worldLinkLinguageBundle
-      }],
-      perspectives: [{
-        address: '__world',
-        expression: bootstrapFixtures.worldPerspective
-      }]
+      languages: [],
+      perspectives: [],
     },
     appBuiltInLangs: [
       "social-context",
