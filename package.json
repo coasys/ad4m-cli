@@ -13,7 +13,7 @@
   "scripts": {
     "run": "node bin/ad4m",
     "test": "jest",
-    "postinstall": "nix-shell --run ./scripts/createHolochainSymlinks.sh && node scripts/get-builtin-langs.js"
+    "postinstall": "ln -sf node_modules/@perspect3vism/ad4m-executor/default.nix default.nix && nix-shell --run ./scripts/createHolochainSymlinks.sh && node scripts/get-builtin-langs.js"
   },
   "keywords": [
     "cli",
