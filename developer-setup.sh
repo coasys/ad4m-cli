@@ -6,4 +6,4 @@
 # cachix: https://app.cachix.org/cache/perspect3vism (optional)
 
 npm install
-npm run bootstrap
+npm run postinstall

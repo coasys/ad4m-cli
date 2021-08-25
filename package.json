@@ -14,7 +14,7 @@
     "run": "node bin/ad4m",
     "setup": "./developer-setup.sh",
     "test": "jest",
-    "bootstrap": "nix-shell --run ./scripts/createHolochainSymlinks.sh && node scripts/get-builtin-langs.js"
+    "postinstall": "nix-shell --run ./scripts/createHolochainSymlinks.sh && node scripts/get-builtin-langs.js"
   },
   "keywords": [
     "cli",
