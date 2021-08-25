@@ -237,7 +237,7 @@ export function cli(args) {
       process.exit(0)
     })
 
-    .command('neighbourhoods <action> [params..]', 'Neighbourhood related action', (yargs) => {
+    .command('neighbourhood <action> [params..]', 'Neighbourhood related action', (yargs) => {
       return yargs
     }, async (argv) => {
       switch (argv.action) {
