@@ -17,8 +17,16 @@ ad4m expression get <url>
 ## Installation
 
 ```
-npm install -g @perspect3vism/ad4m-client
+npm install -g @perspect3vism/ad4m-cli
 ```
+
+This compiles the needed Holochain binaries via nix in the `postinstall` script.
+That means
+1. you'll need to have nix installed
+2. it might take some time
+
+To speed up this process, you can use the Perspect3vism nix cache. Follow these instructions BEFORE running above
+install command: https://app.cachix.org/cache/perspect3vism
 
 ## Example usage session
 
