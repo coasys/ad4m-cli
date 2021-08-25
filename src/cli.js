@@ -14,7 +14,7 @@ import { WebSocketLink } from '@apollo/client/link/ws';
 import WebSockets from "ws";
 
 // Perspectivism imports
-import { Ad4mClient } from "@perspect3vism/ad4m";
+import { Ad4mClient, Link, LinkExpressionInput, LinkQuery } from "@perspect3vism/ad4m";
 import Ad4mExecutor from "@perspect3vism/ad4m-executor";
 
 // Utilities
@@ -23,6 +23,8 @@ import fs from 'fs';
 import path from 'path';
 
 import ReadlineSync from 'readline-sync';
+import util from 'util'
+
 
 // For yet unknown reasons there are two relevant implementations for crypto as
 // of now: The NodeJS core implementation and the Webcrypto implementation(s)
@@ -99,7 +101,8 @@ function serveAd4mExecutor() {
 }
 
 function outputNicely(obj) {
-  console.info(`=> ${JSON.stringify(obj)}`);
+    console.info("=>\n", util.inspect(obj, {showHidden: false, depth: null}))
+    ;
 }
 
 function queryPassphrase() {
@@ -179,20 +182,75 @@ export function cli(args) {
     })
 
     // Perspectives API
-    .command('perspective [action]', 'Perspective-related action', (yargs) => {
+    .command('perspective <action> [params..]', 'Perspective-related action', (yargs) => {
       return yargs
-    }, (argv) => {
-      //if (argv.verbose)
-      //serve(argv.port)
+    }, async (argv) => {
+      switch (argv.action) {
+        case 'all':     outputNicely(await ad4mClient(argv.server).perspective.all());  break;
+        case 'byUUID':  outputNicely(await ad4mClient(argv.server).perspective.byUUID(argv.params[0]));  break;
+        case 'snapshotByUUID':  outputNicely(await ad4mClient(argv.server).perspective.snapshotByUUID(argv.params[0]));  break;
+        case 'queryLinks':  outputNicely(await ad4mClient(argv.server).perspective.queryLinks(argv.params[0], new LinkQuery(JSON.parse(argv.params[1]))));  break;
+        case 'add':  outputNicely(await ad4mClient(argv.server).perspective.add(argv.params[0]));  break;
+        case 'update':  outputNicely(await ad4mClient(argv.server).perspective.update(argv.params[0], argv.params[1]));  break;
+        case 'remove':  outputNicely(await ad4mClient(argv.server).perspective.remove(argv.params[0]));  break;
+        case 'addLink':  outputNicely(await ad4mClient(argv.server).perspective.addLink(argv.params[0], new Link(JSON.parse(argv.params[1]))));  break;
+        case 'updateLink':  outputNicely(await ad4mClient(argv.server).perspective.updateLink(argv.params[0], JSON.parse(argv.params[1], JSON.parse(argv.params[2]))));  break;
+        case 'removeLink':  outputNicely(await ad4mClient(argv.server).perspective.removeLink(argv.params[0], JSON.parse(argv.params[1])));  break;
+
+        default:
+          console.info(`Action "${argv.action}" does not seem to be valid on languages.`)
+          break;
+      }
+      process.exit(0)
     })
 
     // Expressions API
-    .command('expression [action]', 'Expression-related action', (yargs) => {
+    .command('expression <action> <params..>', 'Expression-related action', (yargs) => {
       return yargs
-    }, (argv) => {
-      //if (argv.verbose) console.info(`start server on :${argv.port}`)
-      //serve(argv.port)
+    }, async (argv) => {
+      switch (argv.action) {
+        case 'get':     outputNicely(await ad4mClient(argv.server).expression.get(argv.params[0]));  break;
+        case 'getRaw':  outputNicely(await ad4mClient(argv.server).expression.getRaw(argv.params[0]));  break;
+        case 'create':  outputNicely(await ad4mClient(argv.server).expression.create(argv.params[1], argv.params[0]));  break;
+
+        default:
+          console.info(`Action "${argv.action}" does not seem to be valid on languages.`)
+          break;
+      }
+      process.exit(0)
     })
+
+    .command('languages <action> [params..]', 'Language related action', (yargs) => {
+      return yargs
+    }, async (argv) => {
+      switch (argv.action) {
+        case 'byAddress':  outputNicely(await ad4mClient(argv.server).languages.byAddress(argv.params[0]));  break;
+        case 'byFilter':   outputNicely(await ad4mClient(argv.server).languages.byFilter(argv.params[0]));  break;
+        case 'all':        outputNicely(await (await ad4mClient(argv.server).languages.all()).map(l => {return {name: l.name, address: l.address} } ));  break;
+        case 'writeSettings':    outputNicely(await ad4mClient(argv.server).languages.writeSettings(argv.params[0], argv.params[1]));  break;
+        case 'cloneHolochainTemplate':    outputNicely(await ad4mClient(argv.server).languages.cloneHolochainTemplate(argv.params[0], argv.params[1], argv.params[2]));  break;
+
+        default:
+          console.info(`Action "${argv.action}" does not seem to be valid on languages.`)
+          break;
+      }
+      process.exit(0)
+    })
+
+    .command('neighbourhoods <action> [params..]', 'Neighbourhood related action', (yargs) => {
+      return yargs
+    }, async (argv) => {
+      switch (argv.action) {
+        case 'publishFromPerspective':  outputNicely(await ad4mClient(argv.server).neighbourhood.publishFromPerspective(argv.params[0], argv.params[1], JSON.parse(argv.params[2])));  break;
+        case 'joinFromUrl':   outputNicely(await ad4mClient(argv.server).neighbourhood.joinFromUrl(argv.params[0]));  break;
+
+        default:
+          console.info(`Action "${argv.action}" does not seem to be valid on neighbourhoods.`)
+          break;
+      }
+      process.exit(0)
+    })
+
     .option('server', {
       alias: 's',
       type: 'string',
