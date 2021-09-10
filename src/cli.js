@@ -273,6 +273,35 @@ export function cli(args) {
       process.exit(0)
     })
 
+    .command('runtime <action> [params..]', 'Runtime related action', (yargs) => {
+      return yargs
+    }, async (argv) => {
+      switch (argv.action) {
+        case 'getTrustedAgents':  outputNicely(await ad4mClient(argv.server).runtime.getTrustedAgents());  break;
+        case 'addTrustedAgents':   outputNicely(await ad4mClient(argv.server).runtime.addTrustedAgents(JSON.parse(argv.params[0])));  break;
+        case 'deleteTrustedAgents':   outputNicely(await ad4mClient(argv.server).runtime.deleteTrustedAgents(JSON.parse(argv.params[0])));  break;
+        case 'addTrustedAgent':   outputNicely(await ad4mClient(argv.server).runtime.addTrustedAgents([argv.params[0]]));  break;
+        case 'deleteTrustedAgent':   outputNicely(await ad4mClient(argv.server).runtime.deleteTrustedAgents([argv.params[0]]));  break;
+
+        case 'knownLinkLanguageTemplates':  outputNicely(await ad4mClient(argv.server).runtime.knownLinkLanguageTemplates());  break;
+        case 'addKnownLinkLanguageTemplates':   outputNicely(await ad4mClient(argv.server).runtime.addKnownLinkLanguageTemplates(JSON.parse(argv.params[0])));  break;
+        case 'removeKnownLinkLanguageTemplates':   outputNicely(await ad4mClient(argv.server).runtime.removeKnownLinkLanguageTemplates(JSON.parse(argv.params[0])));  break;
+        case 'addKnownLinkLanguageTemplate':   outputNicely(await ad4mClient(argv.server).runtime.addKnownLinkLanguageTemplates([argv.params[0]]));  break;
+        case 'removeKnownLinkLanguageTemplate':   outputNicely(await ad4mClient(argv.server).runtime.removeKnownLinkLanguageTemplates([argv.params[0]]));  break;
+
+        case 'friends':  outputNicely(await ad4mClient(argv.server).runtime.friends());  break;
+        case 'addFriends':   outputNicely(await ad4mClient(argv.server).runtime.addFriends(JSON.parse(argv.params[0])));  break;
+        case 'removeFriends':   outputNicely(await ad4mClient(argv.server).runtime.removeFriends(JSON.parse(argv.params[0])));  break;
+        case 'addFriend':   outputNicely(await ad4mClient(argv.server).runtime.addFriends([argv.params[0]]));  break;
+        case 'removeFriend':   outputNicely(await ad4mClient(argv.server).runtime.removeFriends([argv.params[0]]));  break;
+
+        default:
+          console.info(`Action "${argv.action}" does not seem to be valid on runtime.`)
+          break;
+      }
+      process.exit(0)
+    })
+
     .option('server', {
       alias: 's',
       type: 'string',
