@@ -14,7 +14,7 @@ import { WebSocketLink } from '@apollo/client/link/ws';
 import WebSockets from "ws";
 
 // Perspectivism imports
-import { Ad4mClient, Link, LinkExpressionInput, LinkQuery } from "@perspect3vism/ad4m";
+import { Ad4mClient, Link, LanguageMetaInput, LinkQuery } from "@perspect3vism/ad4m";
 import Ad4mExecutor from "@perspect3vism/ad4m-executor";
 
 // Utilities
@@ -154,6 +154,26 @@ async function agentStatus(argv) {
   process.exit();
 }
 
+async function interactiveLanguagePublish(argv) {
+  const bundlePath = argv.params[0]
+  const name = ReadlineSync.question("Name (must match name in source code): ");
+  const description = ReadlineSync.question("Description: ");
+  const templateParams = ReadlineSync.question("In case of a templateable Language, list of template parameters (comma separated): ");
+  const sourceLink = ReadlineSync.question("Link to source code / Github repo: ");
+
+  const meta = new LanguageMetaInput(name, description)
+
+  if(sourceLink.trim().length > 0)
+    meta.sourceCodeLink = sourceLink.trim()
+
+  const params = templateParams.split(',').map(e => e.trim())
+  if(params.length > 0) {
+    meta.possibleTemplateParams = params
+  }
+
+  outputNicely(await ad4mClient(argv.server).languages.publish(bundlePath, meta))
+}
+
 export function cli(args) {
   Yargs(hideBin(args))
     // Run Ad4m Executor
@@ -228,7 +248,9 @@ export function cli(args) {
         case 'byFilter':   outputNicely(await ad4mClient(argv.server).languages.byFilter(argv.params[0]));  break;
         case 'all':        outputNicely(await (await ad4mClient(argv.server).languages.all()).map(l => {return {name: l.name, address: l.address} } ));  break;
         case 'writeSettings':    outputNicely(await ad4mClient(argv.server).languages.writeSettings(argv.params[0], argv.params[1]));  break;
-        case 'cloneHolochainTemplate':    outputNicely(await ad4mClient(argv.server).languages.cloneHolochainTemplate(argv.params[0], argv.params[1], argv.params[2]));  break;
+        case 'applyTemplateAndPublish':    outputNicely(await ad4mClient(argv.server).languages.applyTemplateAndPublish(argv.params[0], argv.params[1]));  break;
+        case 'publish':    await interactiveLanguagePublish(argv);  break;
+        case 'meta':    outputNicely(await ad4mClient(argv.server).languages.meta(argv.params[0]));  break;
 
         default:
           console.info(`Action "${argv.action}" does not seem to be valid on languages.`)
@@ -265,3 +287,4 @@ export function cli(args) {
     })
     .argv
 }
+
