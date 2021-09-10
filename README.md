@@ -171,35 +171,106 @@ ad4m perspective addLink 2f168edc-363b-4d3b-818c-48b1f98b714b "{\"source\": \"ro
 
 ### Publishing that local Perspective by turning it into a Neighbourhood
 The back-bone of a Neighbourhood is a *LinkLanguage* - a Language that enables the sharing
-and thus synchronizing of links (see `LinksAdapter` in [Language.ts](src/language/Language.ts)). While there can and should be many different implementations
-with different trade-offs and features (like membranes etc.) the go-to implementation for now
-is *Social Context* from Junto: https://github.com/juntofoundation/Social-Context,
-which is currently included in all deployments and test of ad4m-executor and ad4m-cli.
-The postinstall script donwloads the latest build to `src/builtin-langs/social-context`.
+and thus synchronizing of links (see `LinksAdapter` in [Language.ts](src/language/Language.ts)). 
+While there can and should be many different implementations
+with different trade-offs and features (like membranes etc.),
+there currently is one fully implemented and Holochain based LinkLanguage with the name: *Social Context*.
 
+It is deployed on the current test network (Language Language v0.0.5) under the address:
+`QmZ1mkoY8nLvpxY3Mizx8UkUiwUzjxJxsqSTPPdH8sHxCQ`.
 
-Before creating a new Neighbourhood we got to clone the generic social-context language to instantiate one
-only for this Neighbourhood:
+#### Creating our unique LinkLanguage clone through templating
+But we should not just use this publicly known Language as the back-bone for our new Neighbourhood,
+since we need a unique clone.
+So what we want is to use this existing Language as a template and create a new copy with the same code
+but different UUID and/name in order to create a fresh space for our new Neighbourhood.
+
+What parameters can we adjust when using it as template?
+Let's have a look at the Language's meta information:
 
 ```
-ad4m languages cloneHolochainTemplate /home/lucksus/ad4m-cli/src/builtin-langs/social-context social-context UUID-for-new-Neighbourhood
+$ ad4m languages meta QmZ1mkoY8nLvpxY3Mizx8UkUiwUzjxJxsqSTPPdH8sHxCQ
 
 =>
  {
   name: 'social-context',
-  address: 'QmapZQzgif7P6EtTUkmu53157VmoYg65c9en2De9mz7Rnk'
+  address: 'QmZ1mkoY8nLvpxY3Mizx8UkUiwUzjxJxsqSTPPdH8sHxCQ',
+  description: 'Holochain based LinkLanguage. First full implementation of a LinkLanguage, for collaborative Neighbourhoods where every agent can add links. No membrane. Basic template for all custom Neighbourhoods in this first iteration of the Perspect3vism test network.',
+  author: 'did:key:zQ3shkkuZLvqeFgHdgZgFMUx8VGkgVWsLA83w2oekhZxoCW2n',
+  templated: false,
+  templateSourceLanguageAddress: null,
+  templateAppliedParams: null,
+  possibleTemplateParams: [ 'uuid', 'name', 'description' ],
+  sourceCodeLink: 'https://github.com/juntofoundation/Social-Context'
 }
 ```
 
-This has created and published a new language with the address `QmapZQzgif7P6EtTUkmu53157VmoYg65c9en2De9mz7Rnk`.
+The field `possibleTemplateParams` tells us that we can set a `UUID` and override `name` and `description`.
+Let's leave description but change the name.
+The function `languages.applyTemplateAndPublish()` takes an object as JSON as second parameter like so:
+
+
+```
+ad4m languages applyTemplateAndPublish QmZ1mkoY8nLvpxY3Mizx8UkUiwUzjxJxsqSTPPdH8sHxCQ "{\"uuid\": \"84a329-77384c-1510fb\", \"name\": \"Social Context clone for demo Neighbourhood\"}"
+
+=>
+ {
+  name: 'Social Context clone for demo Neighbourhood',
+  address: 'QmYS6BSJQyy3NpgCPYUn5x9mzUDQRA7GURvwqcScZX8Vyg'
+}
+```
+
+
+This has created and published a new language with the address `QmYS6BSJQyy3NpgCPYUn5x9mzUDQRA7GURvwqcScZX8Vyg`.
+
+Let's have a look at it's meta information:
+
+```
+ad4m languages meta QmYS6BSJQyy3NpgCPYUn5x9mzUDQRA7GURvwqcScZX8Vyg
+
+=>
+ {
+  name: 'Social Context clone for demo Neighbourhood',
+  address: 'QmYS6BSJQyy3NpgCPYUn5x9mzUDQRA7GURvwqcScZX8Vyg',
+  description: 'Holochain based LinkLanguage. First full implementation of a LinkLanguage, for collaborative Neighbourhoods where every agent can add links. No membrane. Basic template for all custom Neighbourhoods in this first iteration of the Perspect3vism test network.',
+  author: 'did:key:zQ3shfVkx4i9CigdakFkyAG3A4CsD7pMSwPzW3Hse6zUsUAjq',
+  templated: true,
+  templateSourceLanguageAddress: 'QmZ1mkoY8nLvpxY3Mizx8UkUiwUzjxJxsqSTPPdH8sHxCQ',
+  templateAppliedParams: '{"name":"Social Context clone for demo Neighbourhood","uuid":"84a329-77384c-1510fb"}',
+  possibleTemplateParams: [ 'uuid', 'name', 'description' ],
+  sourceCodeLink: 'https://github.com/juntofoundation/Social-Context'
+}
+
+```
+
+So this new Language knows that it was templated, how that happened (which parameters) and what the source was.
+This is important because it enables other agents to trust this Language when they install it, given that they trust
+the source.
+Installing a Language (also LinkLanguages) means running foreign code on your computer.
+
+As we can see in the meta information of the source `social-context`, it was authored by 
+`did:key:zQ3shkkuZLvqeFgHdgZgFMUx8VGkgVWsLA83w2oekhZxoCW2n`.
+This is the officil Perspect3vism agent who is registered as a "trusted agent" on all our deployments.
+Before installing a new Language, the ad4m-executor will check if the author is in the list of trusted agents.
+If not, and if the Language was templated, it will check if the template source's author is trusted.
+If that is the case, it will apply the template parameters locally and if the resulting file has the same hash
+as the Language that is about to get installed, it will install it automatically.
+(If all these checks fail, it will currently bail, but we'll add mechanism that prompts the user)
+
+You can always add agent's to the list of "trusted agents" like so:
+```
+ad4m runtime addTrustedAgent did:something:something
+```
+
+#### Creating a Neighbourhood with our fresh LinkLanguage
 
 We can now use this new LinkLanguage in our Neighbourhood.
-neighbourhood publishFromPerspective takes 3 parameters
+`neighbourhood publishFromPerspective` takes 3 parameters
 1. UUID of perspective to publish
 2. address of LinkLanguage to use as Neighbourhoods synchronisation back-bone
 3. A Perspective JSON object that is used for meta information in the immutable neighbourhood object (can be empty like below)
-```js
-ad4m neighbourhood publishFromPerspective 2f168edc-363b-4d3b-818c-48b1f98b714b QmapZQzgif7P6EtTUkmu53157VmoYg65c9en2De9mz7Rnk "{\"links\":[]}"
+```
+ad4m neighbourhood publishFromPerspective 2f168edc-363b-4d3b-818c-48b1f98b714b QmYS6BSJQyy3NpgCPYUn5x9mzUDQRA7GURvwqcScZX8Vyg "{\"links\":[]}"
 
 =>
  'neighbourhood://QmP8ne8CBMFJSEnb4wqsc4D53f4exnYUsGA4YxqwEEbzbN'
