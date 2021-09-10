@@ -174,7 +174,7 @@ The back-bone of a Neighbourhood is a *LinkLanguage* - a Language that enables t
 and thus synchronizing of links (see `LinksAdapter` in [Language.ts](src/language/Language.ts)). 
 While there can and should be many different implementations
 with different trade-offs and features (like membranes etc.),
-there currently is one fully implemented and Holochain based LinkLanguage with the name: *Social Context*.
+there currently is one fully implemented and Holochain based LinkLanguage with the name *Social Context*.
 
 It is deployed on the current test network (Language Language v0.0.5) under the address:
 `QmZ1mkoY8nLvpxY3Mizx8UkUiwUzjxJxsqSTPPdH8sHxCQ`.
@@ -223,7 +223,7 @@ ad4m languages applyTemplateAndPublish QmZ1mkoY8nLvpxY3Mizx8UkUiwUzjxJxsqSTPPdH8
 
 This has created and published a new language with the address `QmYS6BSJQyy3NpgCPYUn5x9mzUDQRA7GURvwqcScZX8Vyg`.
 
-Let's have a look at it's meta information:
+Let's have a look at its meta information:
 
 ```
 ad4m languages meta QmYS6BSJQyy3NpgCPYUn5x9mzUDQRA7GURvwqcScZX8Vyg
@@ -255,7 +255,7 @@ Before installing a new Language, the ad4m-executor will check if the author is 
 If not, and if the Language was templated, it will check if the template source's author is trusted.
 If that is the case, it will apply the template parameters locally and if the resulting file has the same hash
 as the Language that is about to get installed, it will install it automatically.
-(If all these checks fail, it will currently bail, but we'll add mechanism that prompts the user)
+(If all these checks fail, it will currently bail, but we'll add a mechanism that prompts the user)
 
 You can always add agent's to the list of "trusted agents" like so:
 ```
