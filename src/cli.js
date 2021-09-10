@@ -79,7 +79,8 @@ function serveAd4mExecutor() {
       "social-context",
       "note-ipfs"
     ],
-    mocks: false
+    mocks: false,
+    hcUseMdns: false
   })
   .then((ad4mCore) => {
     ad4mCore.waitForAgent().then(async () => {
