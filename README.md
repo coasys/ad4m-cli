@@ -177,7 +177,7 @@ with different trade-offs and features (like membranes etc.),
 there currently is one fully implemented and Holochain based LinkLanguage with the name *Social Context*.
 
 It is deployed on the current test network (Language Language v0.0.5) under the address:
-`QmZ1mkoY8nLvpxY3Mizx8UkUiwUzjxJxsqSTPPdH8sHxCQ`.
+`QmTK51rVNtKvp9vxDNczmiX3MuW1o3wprxg7w9McTLoMAk`.
 
 #### Creating our unique LinkLanguage clone through templating
 But we should not just use this publicly known Language as the back-bone for our new Neighbourhood,
