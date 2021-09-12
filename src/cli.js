@@ -252,6 +252,7 @@ export function cli(args) {
         case 'applyTemplateAndPublish':    outputNicely(await ad4mClient(argv.server).languages.applyTemplateAndPublish(argv.params[0], argv.params[1]));  break;
         case 'publish':    await interactiveLanguagePublish(argv);  break;
         case 'meta':    outputNicely(await ad4mClient(argv.server).languages.meta(argv.params[0]));  break;
+        case 'source': console.log(await ad4mClient(argv.server).languages.source(argv.params[0])); break;
 
         default:
           console.info(`Action "${argv.action}" does not seem to be valid on languages.`)
