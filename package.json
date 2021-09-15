@@ -1,6 +1,6 @@
 {
   "name": "@perspect3vism/ad4m-cli",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "AD4M command-line interface to start and remote-control your local AD4M executor",
   "main": "src/index.js",
   "bin": {
