@@ -296,6 +296,12 @@ export function cli(args) {
         case 'removeFriends':   outputNicely(await ad4mClient(argv.server).runtime.removeFriends(JSON.parse(argv.params[0])));  break;
         case 'addFriend':   outputNicely(await ad4mClient(argv.server).runtime.addFriends([argv.params[0]]));  break;
         case 'removeFriend':   outputNicely(await ad4mClient(argv.server).runtime.removeFriends([argv.params[0]]));  break;
+        case 'hcAgentInfos':   console.log(await ad4mClient(argv.server).runtime.hcAgentInfos());  break;
+        case 'hcAddAgentInfos':   {
+          const agentInfosString = fs.readFileSync(argv.params[0]).toString()
+          outputNicely(await ad4mClient(argv.server).runtime.hcAddAgentInfos(agentInfosString));  
+          break;
+        }
 
         default:
           console.info(`Action "${argv.action}" does not seem to be valid on runtime.`)
