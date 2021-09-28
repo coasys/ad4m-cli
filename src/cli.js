@@ -297,11 +297,25 @@ export function cli(args) {
         case 'addFriend':   outputNicely(await ad4mClient(argv.server).runtime.addFriends([argv.params[0]]));  break;
         case 'removeFriend':   outputNicely(await ad4mClient(argv.server).runtime.removeFriends([argv.params[0]]));  break;
         case 'hcAgentInfos':   console.log(await ad4mClient(argv.server).runtime.hcAgentInfos());  break;
-        case 'hcAddAgentInfos':   {
+        case 'hcAddAgentInfos':
           const agentInfosString = fs.readFileSync(argv.params[0]).toString()
           outputNicely(await ad4mClient(argv.server).runtime.hcAddAgentInfos(agentInfosString));  
           break;
-        }
+        case 'hcAgentInfosReadable':
+          const agentInfos = JSON.parse(await ad4mClient(argv.server).runtime.hcAgentInfos())
+          const agentInfosParsed = agentInfos.map(info => {
+            return {
+                //@ts-ignore
+                agent: Buffer.from(info.agent.data),
+                //@ts-ignore
+                signature: Buffer.from(info.signature.data),
+                //@ts-ignore
+                agent_info: Buffer.from(info.agent_info.data)
+            }
+          })
+
+          agentInfosParsed.forEach(info => console.log("\n", info.agent_info.toString(), "\n"))
+          break;
 
         default:
           console.info(`Action "${argv.action}" does not seem to be valid on runtime.`)
