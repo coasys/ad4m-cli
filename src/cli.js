@@ -76,11 +76,18 @@ function serveAd4mExecutor() {
       neighbourhoods: "neighbourhood-store"
     },
     ad4mBootstrapFixtures: {
-      languages: [{
-        address: 'QmYGSJUQib1H6rHumdRVDhoHgkHm3U8KzSEQFfTPgziAYe',
-        meta:  {"author":"did:key:zQ3shkkuZLvqeFgHdgZgFMUx8VGkgVWsLA83w2oekhZxoCW2n","timestamp":"2021-10-06T17:58:05.141Z","data":{"name":"Direct Message Language","address":"QmYGSJUQib1H6rHumdRVDhoHgkHm3U8KzSEQFfTPgziAYe","description":"Template source for personal, per-agent DM languages. Holochain based.","possibleTemplateParams":["recipient_did","recipient_hc_agent_pubkey"],"sourceCodeLink":"https://github.com/perspect3vism/direct-message-language"},"proof":{"signature":"8a495d3a1f59479109d78800362870158fdc4d8833299bd46d5c4aca3616754d3b3e8dbe74a7b2601b8b81862ffbcbeb6f73f31be255e57e3054026318ac9e38","key":"#zQ3shkkuZLvqeFgHdgZgFMUx8VGkgVWsLA83w2oekhZxoCW2n","valid":true}},
-        bundle: fs.readFileSync(path.join(DOWNLOADED_LANGS_PATH, 'direct-message-language', 'build', 'bundle.js')).toString()
-      }],
+      languages: [
+        {
+          address: 'QmR1dV5KuAQtYG98qqmYEvHXfxJZ3jKyjf7SFMriCMfHVQ',
+          meta:  {"author":"did:key:zQ3shkkuZLvqeFgHdgZgFMUx8VGkgVWsLA83w2oekhZxoCW2n","timestamp":"2021-10-07T21:39:36.607Z","data":{"name":"Direct Message Language","address":"QmR1dV5KuAQtYG98qqmYEvHXfxJZ3jKyjf7SFMriCMfHVQ","description":"Template source for personal, per-agent DM languages. Holochain based.","possibleTemplateParams":["recipient_did","recipient_hc_agent_pubkey"],"sourceCodeLink":"https://github.com/perspect3vism/direct-message-language"},"proof":{"signature":"e933e34f88694816ea91361605c8c2553ceeb96e847f8c73b75477cc7d9bacaf11eae34e38c2e3f474897f59d20f5843d6f1d2c493b13552093bc16472b0ac33","key":"#zQ3shkkuZLvqeFgHdgZgFMUx8VGkgVWsLA83w2oekhZxoCW2n","valid":true}},
+          bundle: fs.readFileSync(path.join(DOWNLOADED_LANGS_PATH, 'direct-message-language', 'build', 'bundle.js')).toString()
+        },
+        {
+          address: 'QmWxQXz8M62TG1Ba7L49uVXMgabzMx4AP4Y56gy3PRvGpW',
+          meta:  {"author":"did:key:zQ3shkkuZLvqeFgHdgZgFMUx8VGkgVWsLA83w2oekhZxoCW2n","timestamp":"2021-10-07T21:46:40.599Z","data":{"name":"Social Context","address":"QmWxQXz8M62TG1Ba7L49uVXMgabzMx4AP4Y56gy3PRvGpW","description":"Holochain based LinkLanguage. First full implementation of a LinkLanguage, for collaborative Neighbourhoods where every agent can add links. No membrane. Basic template for all custom Neighbourhoods in this first iteration of the Perspect3vism test network.","possibleTemplateParams":["uuid","name","description"],"sourceCodeLink":"https://github.com/juntofoundation/Social-Context'"},"proof":{"signature":"b09905f324b12e4b7273aa0af8204b157808e0844b21c956ad7fb3041247a0615c76d5e97a6bf8eee09e3bab799d730045453d44cef55ecf926895a0a8ed0dee","key":"#zQ3shkkuZLvqeFgHdgZgFMUx8VGkgVWsLA83w2oekhZxoCW2n","valid":true}},
+          bundle: fs.readFileSync(path.join(DOWNLOADED_LANGS_PATH, 'social-context', 'build', 'bundle.js')).toString()
+        }
+      ],
       perspectives: [],
     },
     appBuiltInLangs: [
