@@ -19,8 +19,10 @@ import Ad4mExecutor from "@perspect3vism/ad4m-executor";
 
 // Utilities
 import getAppDataPath from "appdata-path";
-import fs from 'fs';
+import fs from 'fs-extra';
 import path from 'path';
+import wget from 'node-wget-js'
+import unzipper from 'unzipper'
 
 import ReadlineSync from 'readline-sync';
 import util from 'util'
@@ -60,12 +62,14 @@ function ad4mClient(uri) {
   return new Ad4mClient(apolloClient(uri));
 }
 
+const DOWNLOADED_LANGS_PATH = path.join(getAppDataPath('ad4m'), 'downloadedLanguages')
+
 function serveAd4mExecutor() {
   Ad4mExecutor
   .init({
     appDataPath: getAppDataPath(),
     resourcePath: path.join(__dirname, '..'),
-    appDefaultLangPath: "./src/builtin-langs",
+    appDefaultLangPath: DOWNLOADED_LANGS_PATH,
     ad4mBootstrapLanguages: {
       agents: "agent-expression-store",
       languages: "languages",
@@ -99,6 +103,83 @@ function serveAd4mExecutor() {
       console.log("\x1b[32m", "All languages initialized!");
     });
   });
+}
+
+async function downloadLanguages() {
+  const languages = {
+    "agent-expression-store": {
+      targetDnaName: "agent-store",
+      dna: "https://github.com/perspect3vism/agent-language/releases/download/0.0.6/agent-store.dna",
+      bundle:
+        "https://github.com/perspect3vism/agent-language/releases/download/0.0.6/bundle.js",
+    },
+    languages: {
+        targetDnaName: "languages",
+        bundle: "https://github.com/perspect3vism/language-persistence/releases/download/0.0.11/bundle.js",
+    },
+    "neighbourhood-store": {
+      targetDnaName: "neighbourhood-store",
+      //dna: "https://github.com/perspect3vism/neighbourhood-language/releases/download/0.0.2/neighbourhood-store.dna",
+      bundle: "https://github.com/perspect3vism/neighbourhood-language/releases/download/0.0.3/bundle.js",
+    },
+    "social-context": {
+      bundle: "https://github.com/juntofoundation/Social-Context/releases/download/0.0.15/bundle.js",
+    },
+    "note-ipfs": {
+      bundle: "https://github.com/perspect3vism/lang-note-ipfs/releases/download/0.0.1/bundle.js",
+    },
+    "direct-message-language": {
+      bundle: "https://github.com/perspect3vism/direct-message-language/releases/download/0.0.1/bundle.js"
+    }
+  };
+
+  const targetDir = DOWNLOADED_LANGS_PATH
+
+  for (const lang in languages) {
+    const dir = path.join(targetDir, lang)
+    await fs.ensureDir(dir + "/build");
+
+    // bundle
+    if (languages[lang].bundle) {
+      let url = languages[lang].bundle;
+      let dest = dir + "/build/bundle.js";
+      wget({ url, dest });
+    }
+
+    // dna
+    if (languages[lang].dna) {
+      let url = languages[lang].dna;
+      let dest = dir + `/${languages[lang].targetDnaName}.dna`;
+      wget({ url, dest });
+    }
+
+    if (languages[lang].zipped) {
+      await wget(
+        {
+          url: languages[lang].resource,
+          dest: `${dir}/lang.zip`,
+        },
+        async () => {
+          //Read the zip file into a temp directory
+          await fs
+            .createReadStream(`${dir}/lang.zip`)
+            .pipe(unzipper.Extract({ path: `${dir}` }))
+            .promise();
+
+          // if (!fs.pathExistsSync(`${dir}/bundle.js`)) {
+          //   throw Error("Did not find bundle file in unzipped path");
+          // }
+
+          fs.copyFileSync(
+            path.join(`${dir}/bundle.js`),
+            path.join(`${dir}/build/bundle.js`)
+          );
+          fs.rmSync(`${dir}/lang.zip`);
+          fs.rmSync(`${dir}/bundle.js`);
+        }
+      );
+    }
+  }
 }
 
 function outputNicely(obj) {
@@ -178,9 +259,17 @@ async function interactiveLanguagePublish(argv) {
 export function cli(args) {
   Yargs(hideBin(args))
     // Run Ad4m Executor
-    .command('serve', 'Serves the ad4m executor', (yargs) => {
+    .command('executor <action>', 'Run and initialize the ad4m executor', (yargs) => {
+      return yargs
     }, async (argv) => {
-      serveAd4mExecutor();
+      switch (argv.action) {
+        case 'run':  await downloadLanguages(); serveAd4mExecutor();  break;
+        case 'init': await downloadLanguages(); process.exit(0); break;
+        default:
+          console.info(`Action "${argv.action}" does not seem to be valid on executor.`)
+          process.exit(0)
+          break;
+      }
     })
 
     // Agents API
@@ -195,6 +284,7 @@ export function cli(args) {
         case 'lock':      agentLock(argv);      break;
         case 'unlock':    agentUnlock(argv);    break;
         case 'status':    agentStatus(argv);    break;
+        case 'me':        outputNicely(await ad4mClient(argv.server).agent.me()); process.exit(0); break;
 
         default:
           console.info(`Action "${argv.action}" does not seem to be valid on agent.`)
