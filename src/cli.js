@@ -260,6 +260,31 @@ async function interactiveLanguagePublish(argv) {
   outputNicely(await ad4mClient(argv.server).languages.publish(bundlePath, meta))
 }
 
+async function projectLanguagePublish(argv) {
+  const projectAd4mFile = JSON.parse(fs.readFileSync(path.join(process.env.PWD, 'ad4m.json')))
+  const { name, description, possibleTemplateParams, sourceCodeLink, bundle } = projectAd4mFile
+  const bundlePath = path.join(process.env.PWD, bundle)
+
+  if(!name) {
+    console.error("'name' missing in ad4m.json")
+    process.exit(1)
+  }
+
+  if(!description) {
+    console.error("'description' missing in ad4m.json")
+    process.exit(1)
+  }
+
+  const meta = new LanguageMetaInput(name, description)
+
+  meta.possibleTemplateParams = possibleTemplateParams
+
+  if(sourceCodeLink.trim().length > 0)
+    meta.sourceCodeLink = sourceCodeLink.trim()
+
+  outputNicely(await ad4mClient(argv.server).languages.publish(bundlePath, meta))
+}
+
 export function cli(args) {
   Yargs(hideBin(args))
     // Run Ad4m Executor
@@ -344,7 +369,17 @@ export function cli(args) {
         case 'all':        outputNicely(await (await ad4mClient(argv.server).languages.all()).map(l => {return {name: l.name, address: l.address} } ));  break;
         case 'writeSettings':    outputNicely(await ad4mClient(argv.server).languages.writeSettings(argv.params[0], argv.params[1]));  break;
         case 'applyTemplateAndPublish':    outputNicely(await ad4mClient(argv.server).languages.applyTemplateAndPublish(argv.params[0], argv.params[1]));  break;
-        case 'publish':    await interactiveLanguagePublish(argv);  break;
+        case 'publish':    
+          if(fs.existsSync(path.join(process.env.PWD, 'ad4m.json'))) {
+            await projectLanguagePublish(argv);
+          } else {
+            if(argv.params.length == 0) {
+              console.error("No ad4m.json file found and no bundle path given. No idea what to publish.")
+              process.exit(1)
+            }
+            await interactiveLanguagePublish(argv);  
+          }
+          break;  
         case 'meta':    outputNicely(await ad4mClient(argv.server).languages.meta(argv.params[0]));  break;
         case 'source': console.log(await ad4mClient(argv.server).languages.source(argv.params[0])); break;
 
