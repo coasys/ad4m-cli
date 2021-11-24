@@ -4,7 +4,7 @@ This is a command-line program for starting and remote-controlling your local AD
 
 Start an executor with this command:
 ```
-ad4m serve
+ad4m executor run
 ```
 
 All sub-clients of the class [Ad4mClient](https://github.com/perspect3vism/ad4m/blob/main/src/Ad4mClient.ts) (from the root [AD4M repo](https://github.com/perspect3vism/ad4m)) map to sub-commands, and their functions to parameters.
@@ -32,7 +32,7 @@ install command: https://app.cachix.org/cache/perspect3vism
 
 First run
 ```
-ad4m serve
+ad4m executor run
 ```
 in a shell window that stays open in the background.
 
