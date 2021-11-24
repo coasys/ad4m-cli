@@ -136,6 +136,7 @@ async function downloadLanguages() {
     },
     "social-context": {
       bundle: "https://github.com/juntofoundation/Social-Context/releases/download/0.0.18/bundle.js",
+      dna: "https://github.com/juntofoundation/Social-Context/releases/download/0.0.18/social-context.dna"
     },
     "note-ipfs": {
       bundle: "https://github.com/perspect3vism/lang-note-ipfs/releases/download/0.0.1/bundle.js",
