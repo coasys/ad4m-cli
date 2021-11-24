@@ -135,6 +135,7 @@ async function downloadLanguages() {
       bundle: "https://github.com/perspect3vism/neighbourhood-language/releases/download/0.0.3/bundle.js",
     },
     "social-context": {
+      targetDnaName: "social-context",
       bundle: "https://github.com/juntofoundation/Social-Context/releases/download/0.0.18/bundle.js",
       dna: "https://github.com/juntofoundation/Social-Context/releases/download/0.0.18/social-context.dna"
     },
