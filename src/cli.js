@@ -337,7 +337,13 @@ export function cli(args) {
       return yargs
     }, async (argv) => {
       switch (argv.action) {
-        case 'all':     outputNicely(await ad4mClient(argv.server).perspective.all());  break;
+        case 'all':     outputNicely((await ad4mClient(argv.server).perspective.all()).map(proxy => {
+          return {
+            name: proxy.name,
+            uuid: proxy.uuid,
+            sharedUrl: proxy.sharedUrl
+          }
+        }));  break;
         case 'byUUID':  outputNicely(await ad4mClient(argv.server).perspective.byUUID(argv.params[0]));  break;
         case 'snapshotByUUID':  outputNicely(await ad4mClient(argv.server).perspective.snapshotByUUID(argv.params[0]));  break;
         case 'queryLinks':  outputNicely(await ad4mClient(argv.server).perspective.queryLinks(argv.params[0], new LinkQuery(JSON.parse(argv.params[1]))));  break;
