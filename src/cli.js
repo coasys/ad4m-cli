@@ -73,6 +73,7 @@ function serveAd4mExecutor() {
     ad4mBootstrapLanguages: {
       agents: "agent-expression-store",
       languages: "languages",
+      perspectives: "perspective-language",
       neighbourhoods: "neighbourhood-store"
     },
     ad4mBootstrapFixtures: {
@@ -141,6 +142,9 @@ async function downloadLanguages() {
     },
     "direct-message-language": {
       bundle: "https://github.com/perspect3vism/direct-message-language/releases/download/0.0.1/bundle.js"
+    },
+    "perspective-language": {
+      bundle: "https://github.com/perspect3vism/perspective-language/releases/download/0.0.1/bundle.js"
     }
   };
 
@@ -336,6 +340,7 @@ export function cli(args) {
         case 'all':     outputNicely(await ad4mClient(argv.server).perspective.all());  break;
         case 'byUUID':  outputNicely(await ad4mClient(argv.server).perspective.byUUID(argv.params[0]));  break;
         case 'snapshotByUUID':  outputNicely(await ad4mClient(argv.server).perspective.snapshotByUUID(argv.params[0]));  break;
+        case 'publishSnapshotByUUID':  outputNicely(await ad4mClient(argv.server).perspective.publishSnapshotByUUID(argv.params[0]));  break;
         case 'queryLinks':  outputNicely(await ad4mClient(argv.server).perspective.queryLinks(argv.params[0], new LinkQuery(JSON.parse(argv.params[1]))));  break;
         case 'add':  outputNicely(await ad4mClient(argv.server).perspective.add(argv.params[0]));  break;
         case 'update':  outputNicely(await ad4mClient(argv.server).perspective.update(argv.params[0], argv.params[1]));  break;
