@@ -121,9 +121,9 @@ async function downloadLanguages() {
   const languages = {
     "agent-expression-store": {
       targetDnaName: "agent-store",
-      dna: "https://github.com/perspect3vism/agent-language/releases/download/0.0.8/agent-store.dna",
+      dna: "https://github.com/perspect3vism/agent-language/releases/download/0.0.9/agent-store.dna",
       bundle:
-        "https://github.com/perspect3vism/agent-language/releases/download/0.0.8/bundle.js",
+        "https://github.com/perspect3vism/agent-language/releases/download/0.0.9/bundle.js",
     },
     languages: {
         targetDnaName: "languages",
