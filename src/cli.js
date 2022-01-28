@@ -150,22 +150,26 @@ async function downloadLanguages() {
 
   const targetDir = DOWNLOADED_LANGS_PATH
 
+  console.log("List of languages to download:", languages)
   for (const lang in languages) {
+    console.log("Downloading:", lang)
     const dir = path.join(targetDir, lang)
-    await fs.ensureDir(dir + "/build");
+    const buildDir = path.join(dir, "build")
+    console.log("Creating directory:", buildDir)
+    await fs.ensureDir(buildDir);
 
     // bundle
     if (languages[lang].bundle) {
       let url = languages[lang].bundle;
       let dest = dir + "/build/bundle.js";
-      wget({ url, dest });
+      await wget({ url, dest });
     }
 
     // dna
     if (languages[lang].dna) {
       let url = languages[lang].dna;
       let dest = dir + `/${languages[lang].targetDnaName}.dna`;
-      wget({ url, dest });
+      await wget({ url, dest });
     }
 
     if (languages[lang].zipped) {
@@ -194,7 +198,10 @@ async function downloadLanguages() {
         }
       );
     }
+    console.log("Done.")
   }
+
+  await new Promise(r => setTimeout(r, 2000))
 }
 
 function outputNicely(obj) {
@@ -303,7 +310,7 @@ export function cli(args) {
       return yargs
     }, async (argv) => {
       switch (argv.action) {
-        case 'run':  await downloadLanguages(); serveAd4mExecutor();  break;
+        case 'run':  serveAd4mExecutor();  break;
         case 'init': await downloadLanguages(); process.exit(0); break;
         default:
           console.info(`Action "${argv.action}" does not seem to be valid on executor.`)
