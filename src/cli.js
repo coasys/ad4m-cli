@@ -62,7 +62,7 @@ function ad4mClient(uri) {
   return new Ad4mClient(apolloClient(uri));
 }
 
-const DOWNLOADED_LANGS_PATH = path.join(getAppDataPath('ad4m'), 'downloadedLanguages')
+const DOWNLOADED_LANGS_PATH = path.join(getAppDataPath('ad4m'), 'downloadedLanguages').replace(/(\s+)/g, '\$1')
 
 function serveAd4mExecutor() {
   Ad4mExecutor
