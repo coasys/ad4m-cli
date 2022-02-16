@@ -480,7 +480,7 @@ export function cli(args) {
     .option('server', {
       alias: 's',
       type: 'string',
-      default: 'http://localhost:4000/graphql',
+      default: 'ws://localhost:4000/graphql',
       description: 'Server to connect to'
     })
     .option('verbose', {
